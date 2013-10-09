@@ -59,20 +59,21 @@ var Hubbub = (function () {
     if (cache.hasGist(gistId)) {
       callback(el, cache.getGist(gistId));
     } else {
-      var req = new XMLHttpRequest();
-      req.onload = function (res) {
-        var comments = JSON.parse(res.target.responseText);
-        cache.setGist(gistId, comments);
-        callback(el, comments);
-      };
       var url;
       if (useFixtures) {
         url = 'fixtures/' + gistId + '.json';
       } else {
         url = apiRoot + 'gists/' + gistId + '/comments';
       }
-      req.open('get', url, true);
-      req.send();
+      ajax({
+        url:url,
+        dataType: 'json'
+      }, function (comments) {
+        cache.setGist(gistId, comments);
+        callback(el, comments);
+      }, function (err) {
+        el.innerHTML = el.innerHTML + "<small>Error fetching Comments</small>";
+      });
     }
   }
 
@@ -125,13 +126,16 @@ var Hubbub = (function () {
     el.setAttribute('title', timestamp);
 
     diff = Math.round(diff / 1000);
+    var str;
 
     if (diff < 3600) {
       str = Math.round(diff / 60) + ' minutes ago'
     } else if (diff < 86400) {
-      str = Math.round(diff / 3600) + ' hours ago'
+      var hours = Math.round(diff / 3600);
+      str = hours === 1 ? 'an hour ago' : hours + ' hours ago'
     } else {
-      str = Math.round(diff / 86400) + ' days ago'
+      var days = Math.round(diff / 86400);
+      str = days === 1 ? 'yesterday' : days + ' days ago'
     }
 
     el.textContent = str;
@@ -146,6 +150,7 @@ var Hubbub = (function () {
     if (cache.hasMarkdown(comment.id)) {
       body.innerHTML = cache.getMarkdown(comment.id);
     } else {
+      body.innerHTML = '<p>' + comment.body + '</p>';
       parseMarkdown(comment, function (text) {
         body.innerHTML = text;
       });
@@ -153,27 +158,49 @@ var Hubbub = (function () {
     return body;
   }
 
-  function parseMarkdown (comment, callback) {
-    var req = new XMLHttpRequest();
-    req.onload = function (res) {
-      console.log(res.target.responseText);
-      cache.setMarkdown(comment.id, res.target.responseText);
-      callback(res.target.responseText);
-    };
-    var url;
+  function parseMarkdown (comment, success) {
+    var opts = {};
     if (useFixtures) {
-      url = 'fixtures/' + comment.id + '.html';
-      req.open('get', url, true);
-      req.send();
+      opts.url = 'fixtures/' + comment.id + '.html';
     } else {
-      url = apiRoot + 'markdown';
-      req.open('post', url, true);
-      req.setRequestHeader("Content-type", "application/json");
-      req.send(JSON.stringify({
-        text: comment.body
-      }));
+      opts.url = apiRoot + 'markdown';
+      opts.reqDataType = 'json';
+      opts.type = 'POST';
+      opts.data = { text: comment.body };
+    }
+    ajax(opts, function (markdown) {
+      cache.setMarkdown(comment.id, markdown);
+      success(markdown);
+    }, function (err) {
+      // do nothing
+    });
+  }
+
+  function ajax (options, success, error) {
+    var req = new XMLHttpRequest();
+    options.type = options.type || 'GET';
+    req.addEventListener('readystatechange', function (res) {
+      if (req.readyState === 4 && req.status === 200) {
+        var data;
+        if (options.dataType === 'json') {
+          data = JSON.parse(res.target.responseText);
+        } else {
+          data = res.target.responseText;
+        }
+        success(data, res);
+      } else if (req.readyState === 4) {
+        error(res);
+      }
+    });
+    req.open(options.type, options.url, true);
+    if (options.reqDataType === 'json') {
+      req.setRequestHeader('Content-type', 'application/json');
+      req.send(JSON.stringify(options.data));
+    } else {
+      req.send(options.data);
     }
   }
+  hubbub.ajax = ajax;
 
   function renderAvatar (user) {
     var img = document.createElement('img');
