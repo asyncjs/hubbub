@@ -9,8 +9,8 @@ var Hubbub = (function () {
   var cache = (function () {
     var gistKey      = 'hubbub-gist-',
         markdownKey  = 'hubbub-markdown-',
-        gistLife     = 60000,
-        markdownLife = 1800000;
+        gistLife     = 3600000,
+        markdownLife = 21600000;
 
     return {
       hasGist: function (id) {
@@ -166,9 +166,9 @@ var Hubbub = (function () {
       req.open('get', url, true);
       req.send();
     } else {
-      url = apiRoot + 'markdown/';
-      req.setRequestHeader("Content-type", "application/json");
+      url = apiRoot + 'markdown';
       req.open('post', url, true);
+      req.setRequestHeader("Content-type", "application/json");
       req.send(JSON.stringify({
         text: comment.body
       }));
