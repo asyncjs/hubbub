@@ -1,0 +1,17 @@
+.hubbub-avatar {
+  border-radius: 3px;
+  float: left;
+}
+.hubbub-content {
+  margin-left: 55px;
+}
+.hubbub-timestamp {
+  float: right;
+}
+.hubbub-header a {
+  margin-right: 5px;
+}
+.hubbub-username {
+  color: #000;
+  text-decoration: none;
+}

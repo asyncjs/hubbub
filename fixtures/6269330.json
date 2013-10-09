@@ -1,0 +1,54 @@
+[
+  {
+    "url": "https://api.github.com/gists/6269330/comments/894524",
+    "id": 894524,
+    "user": {
+      "login": "felippenardi",
+      "id": 1354492,
+      "avatar_url": "https://1.gravatar.com/avatar/bdab980cddeed33d15c12b715ed604af?d=https%3A%2F%2Fidenticons.github.com%2F90c05dec51ae0601e4b320d14d53950b.png",
+      "gravatar_id": "bdab980cddeed33d15c12b715ed604af",
+      "url": "https://api.github.com/users/felippenardi",
+      "html_url": "https://github.com/felippenardi",
+      "followers_url": "https://api.github.com/users/felippenardi/followers",
+      "following_url": "https://api.github.com/users/felippenardi/following{/other_user}",
+      "gists_url": "https://api.github.com/users/felippenardi/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/felippenardi/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/felippenardi/subscriptions",
+      "organizations_url": "https://api.github.com/users/felippenardi/orgs",
+      "repos_url": "https://api.github.com/users/felippenardi/repos",
+      "events_url": "https://api.github.com/users/felippenardi/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/felippenardi/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "created_at": "2013-08-26T02:33:21Z",
+    "updated_at": "2013-08-26T02:33:51Z",
+    "body": "Hail!\r\n\r\nMy Name is Felipe Nardi and here is [my blog](http://felippenardi.github.io), [my twitter](http://twitter.com/felippenardi) and [my stackoverflow careers profile](http://careers.stackoverflow.com/nardi ).\r\n\r\nI'd like to talk about **How to use an iPad to develop front and back-end**, using a combination of VIM, an ec2 instance and an external keyboard.\r\n\r\nHere is what it looks like: [https://twitter.com/FelippeNardi/.../photo/1](https://twitter.com/FelippeNardi/status/356539837232332800/photo/1)"
+  },
+  {
+    "url": "https://api.github.com/gists/6269330/comments/913007",
+    "id": 913007,
+    "user": {
+      "login": "andrew",
+      "id": 1060,
+      "avatar_url": "https://1.gravatar.com/avatar/8ddbf811da78bb0daeeb3cacd7cf743f?d=https%3A%2F%2Fidenticons.github.com%2F299a23a2291e2126b91d54f3601ec162.png",
+      "gravatar_id": "8ddbf811da78bb0daeeb3cacd7cf743f",
+      "url": "https://api.github.com/users/andrew",
+      "html_url": "https://github.com/andrew",
+      "followers_url": "https://api.github.com/users/andrew/followers",
+      "following_url": "https://api.github.com/users/andrew/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andrew/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andrew/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andrew/subscriptions",
+      "organizations_url": "https://api.github.com/users/andrew/orgs",
+      "repos_url": "https://api.github.com/users/andrew/repos",
+      "events_url": "https://api.github.com/users/andrew/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andrew/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "created_at": "2013-09-22T21:21:07Z",
+    "updated_at": "2013-09-22T21:21:07Z",
+    "body": "I'll be in town and love to share how easy is it to control robots with Node.js (either a sumo bot or Nodecopter depending on space)"
+  }
+]
