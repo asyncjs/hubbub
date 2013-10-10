@@ -49,6 +49,7 @@ var Hubbub = (function () {
   })();
 
   // Initial setup
+  appendStyle();
   [].forEach.call(widgets, function (el) {
     getComments(el, renderComments);
   });
@@ -78,7 +79,14 @@ var Hubbub = (function () {
   }
 
   function renderComments (el, comments) {
-    el.innerHTML = '<h3>Comments</h3>';
+    var heading = document.createElement('h3');
+    heading.setAttribute('class', 'heading');
+    var link = document.createElement('a');
+    link.setAttribute('href', el.getAttribute(gistUrlAttr));
+    link.textContent = 'Comments (' + comments.length + ')';
+    heading.appendChild(link);
+    el.appendChild(heading);
+
     comments.forEach(function (comment) {
       el.appendChild(renderComment(el, comment));
     });
@@ -105,7 +113,7 @@ var Hubbub = (function () {
     var un = document.createElement('a');
     un.setAttribute('class', 'hubbub-username');
     un.setAttribute('href', comment.user.html_url);
-    un.textContent = comment.user.login;
+    un.innerHTML = '<b>' + comment.user.login + '</b>';
 
     var commentUrl = container.getAttribute(gistUrlAttr);
     commentUrl = commentUrl + '#comment-' + comment.id;
@@ -212,6 +220,14 @@ var Hubbub = (function () {
     img.setAttribute('width', 48);
     img.setAttribute('height', 48);
     return img;
+  }
+
+  function appendStyle () {
+    var link = document.createElement('link');
+    link.setAttribute('rel', 'stylesheet');
+    link.setAttribute('type', 'text/css');
+    link.setAttribute('href', 'http://seanewt.com/files/hubbub.css');
+    document.head.appendChild(link);
   }
 
   return hubbub;

@@ -18,3 +18,14 @@
   color: #000;
   text-decoration: none;
 }
+.hubbub-comment-body p {
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+/* async.js specific styling */
+.hubbub-comment-body a {
+  border-bottom:1px dashed;
+}
+.hubbub-avatar {
+  margin-top:4px;
+}
