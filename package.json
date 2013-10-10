@@ -1,0 +1,26 @@
+{
+  "name": "hubbub",
+  "version": "0.1.0",
+  "description": "A tiny widget that displays GitHub Gist comments.",
+  "author": "Chris Newton",
+  "main": "hubbub.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/chrisnewtn/hubbub.git"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.6.4",
+    "grunt-contrib-uglify": "~0.2.4"
+  },
+  "keywords": [
+    "github",
+    "gist",
+    "widget",
+    "comments"
+  ],
+  "bugs": {
+    "url": "https://github.com/chrisnewtn/hubbub/issues"
+  }
+}

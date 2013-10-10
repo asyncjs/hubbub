@@ -140,13 +140,13 @@ var Hubbub = (function () {
     var str;
 
     if (diff < 3600) {
-      str = Math.round(diff / 60) + ' minutes ago'
+      str = Math.round(diff / 60) + ' minutes ago';
     } else if (diff < 86400) {
       var hours = Math.round(diff / 3600);
-      str = hours === 1 ? 'an hour ago' : hours + ' hours ago'
+      str = hours === 1 ? 'an hour ago' : hours + ' hours ago';
     } else {
       var days = Math.round(diff / 86400);
-      str = days === 1 ? 'yesterday' : days + ' days ago'
+      str = days === 1 ? 'yesterday' : days + ' days ago';
     }
 
     el.textContent = str;
@@ -226,7 +226,7 @@ var Hubbub = (function () {
     var link = document.createElement('link');
     link.setAttribute('rel', 'stylesheet');
     link.setAttribute('type', 'text/css');
-    link.setAttribute('href', 'http://seanewt.com/files/hubbub.css');
+    link.setAttribute('href', 'http://seanewt.com/files/hubbub/hubbub.css');
     document.head.appendChild(link);
   }
 
