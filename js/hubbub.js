@@ -1,6 +1,6 @@
 var Hubbub = (function () {
   var cssClass    = '.hubbub',
-      gistIdAttr  = 'data-gist-id',
+      gistUrlAttr = 'data-gist-url',
       apiRoot     = 'https://api.github.com/',
       widgets     = document.querySelectorAll(cssClass),
       hubbub      = {},
@@ -54,7 +54,7 @@ var Hubbub = (function () {
   });
 
   function getComments (el, callback) {
-    var gistId = el.getAttribute(gistIdAttr);
+    var gistId = el.getAttribute(gistUrlAttr).match(/\/(\d+)\/?$/)[1];
 
     if (cache.hasGist(gistId)) {
       callback(el, cache.getGist(gistId));
@@ -80,25 +80,25 @@ var Hubbub = (function () {
   function renderComments (el, comments) {
     el.innerHTML = '<h3>Comments</h3>';
     comments.forEach(function (comment) {
-      el.appendChild(renderComment(comment));
+      el.appendChild(renderComment(el, comment));
     });
   }
 
-  function renderComment (comment) {
+  function renderComment (container, comment) {
     var el = document.createElement('div');
     el.setAttribute('class', 'hubbub-container');
     el.appendChild(renderAvatar(comment.user));
 
     var content = document.createElement('div');
     content.setAttribute('class', 'hubbub-content');
-    content.appendChild(renderHeader(comment));
+    content.appendChild(renderHeader(container, comment));
     content.appendChild(renderCommentBody(comment));
 
     el.appendChild(content);
     return el;
   }
 
-  function renderHeader (comment) {
+  function renderHeader (container, comment) {
     var header = document.createElement('div');
     header.setAttribute('class', 'hubbub-header');
 
@@ -107,9 +107,12 @@ var Hubbub = (function () {
     un.setAttribute('href', comment.user.html_url);
     un.textContent = comment.user.login;
 
+    var commentUrl = container.getAttribute(gistUrlAttr);
+    commentUrl = commentUrl + '#comment-' + comment.id;
+
     var pl = document.createElement('a');
     pl.setAttribute('class', 'hubbub-permalink');
-    pl.setAttribute('href', comment.url);
+    pl.setAttribute('href', commentUrl);
     pl.textContent = 'commented';
 
     header.appendChild(un);

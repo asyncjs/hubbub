@@ -12,6 +12,9 @@
   margin-right: 5px;
 }
 .hubbub-username {
+  font-weight: bold;
+}
+.hubbub-username, .hubbub-permalink {
   color: #000;
   text-decoration: none;
 }
