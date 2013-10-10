@@ -1,4 +1,22 @@
+/*!
+    Hubbub
+
+    by Chris Newton <http://chrisnewtn.com>,
+       Seanewt <http://seanewt.com>,
+       Dharmafly <http://dharmafly.com>
+
+    Repo: <https://github.com/asyncjs/hubbub>
+    MIT license
+*/
+
 var Hubbub = (function () {
+  
+  'use strict';
+
+  if (![].forEach || !window.XMLHttpRequest) {
+    return;
+  }
+
   var cssClass    = '.hubbub',
       gistUrlAttr = 'data-gist-url',
       apiRoot     = 'https://api.github.com/',
@@ -49,7 +67,7 @@ var Hubbub = (function () {
   })();
 
   // Initial setup
-  appendStyle();
+  //appendStyle();
   [].forEach.call(widgets, function (el) {
     getComments(el, renderComments);
   });
