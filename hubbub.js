@@ -17,10 +17,10 @@ var Hubbub = (function () {
     return;
   }
 
-  var cssClass    = '.hubbub',
+  var cssClass    = 'hubbub',
       gistUrlAttr = 'data-gist-url',
       apiRoot     = 'https://api.github.com/',
-      widgets     = document.querySelectorAll(cssClass),
+      widgets     = document.querySelectorAll('.'+cssClass),
       hubbub      = {},
       useFixtures = false;
 
@@ -67,7 +67,6 @@ var Hubbub = (function () {
   })();
 
   // Initial setup
-  //appendStyle();
   [].forEach.call(widgets, function (el) {
     getComments(el, renderComments);
   });
@@ -187,7 +186,7 @@ var Hubbub = (function () {
     return body;
   }
 
-  function parseMarkdown (comment, success) {
+  function parseMarkdown (comment, callback) {
     var opts = {};
     if (useFixtures) {
       opts.url = 'fixtures/' + comment.id + '.html';
@@ -199,9 +198,7 @@ var Hubbub = (function () {
     }
     ajax(opts, function (markdown) {
       cache.setMarkdown(comment.id, markdown);
-      success(markdown);
-    }, function (err) {
-      // do nothing
+      callback(markdown);
     });
   }
 
@@ -218,7 +215,9 @@ var Hubbub = (function () {
         }
         success(data, res);
       } else if (req.readyState === 4) {
-        error(res);
+        if (error) {
+          error(res);
+        }
       }
     });
     req.open(options.type, options.url, true);
@@ -229,24 +228,27 @@ var Hubbub = (function () {
       req.send(options.data);
     }
   }
-  hubbub.ajax = ajax;
 
   function renderAvatar (user) {
+    var a = document.createElement('a');
+    a.setAttribute('href', user.html_url);
+    a.setAttribute('class', 'hubbub-avatar-link');
     var img = document.createElement('img');
     img.setAttribute('class', 'hubbub-avatar');
     img.setAttribute('src', user.avatar_url);
     img.setAttribute('width', 48);
     img.setAttribute('height', 48);
-    return img;
+    a.appendChild(img);
+    return a;
   }
 
-  function appendStyle () {
-    var link = document.createElement('link');
-    link.setAttribute('rel', 'stylesheet');
-    link.setAttribute('type', 'text/css');
-    link.setAttribute('href', 'http://seanewt.com/files/hubbub/hubbub.css');
-    document.head.appendChild(link);
-  }
+  hubbub.appendWidget = function (el, gistUrl) {
+    var div = document.createElement('div');
+    div.setAttribute('class', cssClass);
+    div.setAttribute(gistUrlAttr, gistUrl);
+    el.appendChild(div);
+    getComments(div, renderComments);
+  };
 
   return hubbub;
 })();
