@@ -37,44 +37,26 @@ var Hubbub = (function () {
   };
 
   var cache = (function () {
-    var gistKey      = 'hubbub-gist-',
-        markdownKey  = 'hubbub-markdown-',
-        gistLife     = 60 * 60 * 1000,
-        markdownLife = 6 * 60 * 60 * 1000;
+    var key  = 'hubbub-',
+        life = 60 * 60 * 1000;
 
     return {
-      hasGist: function (id) {
-        return localStorage.getItem(gistKey+id) !== null;
+      has: function (id) {
+        return localStorage.getItem(key+id) !== null;
       },
-      getGist: function (id) {
-        var blob = JSON.parse(localStorage.getItem(gistKey+id));
+      get: function (id) {
+        var blob = JSON.parse(localStorage.getItem(key+id));
         if (blob !== null) {
-          if ((Date.now() - blob.createdAt) > gistLife) {
-            localStorage.removeItem(gistKey+id);
+          if ((Date.now() - blob.createdAt) > life) {
+            localStorage.removeItem(key+id);
           }
         }
         return blob.comments;
       },
-      setGist: function (id, comments) {
+      set: function (id, comments) {
         var blob = { comments: comments, createdAt: Date.now() };
-        localStorage.setItem(gistKey+id, JSON.stringify(blob));
-      },
-      hasMarkdown: function (id) {
-        return localStorage.getItem(markdownKey+id) !== null;
-      },
-      getMarkdown: function (id) {
-        var blob = JSON.parse(localStorage.getItem(markdownKey+id));
-        if (blob !== null) {
-          if ((Date.now() - blob.createdAt) > markdownLife) {
-            localStorage.removeItem(markdownKey+id);
-          }
-        }
-        return blob.text;
-      },
-      setMarkdown: function (id, text) {
-        var blob = { text: text, createdAt: Date.now() };
-        localStorage.setItem(markdownKey+id, JSON.stringify(blob));
-      },
+        localStorage.setItem(key+id, JSON.stringify(blob));
+      }
     };
   })();
 
@@ -86,8 +68,8 @@ var Hubbub = (function () {
   function getComments (el, callback) {
     var gistId = el.getAttribute(gistUrlAttr).match(/\/(\d+)\/?$/)[1];
 
-    if (cache.hasGist(gistId)) {
-      callback(el, cache.getGist(gistId));
+    if (cache.has(gistId)) {
+      callback(el, cache.get(gistId), gistId);
     } else {
       var url;
       if (useFixtures) {
@@ -99,12 +81,37 @@ var Hubbub = (function () {
         url:url,
         dataType: 'json'
       }, function (comments) {
-        cache.setGist(gistId, comments);
-        callback(el, comments);
+        parseMarkdown(comments, gistId, el, callback);
       }, function (err) {
         el.innerHTML = el.innerHTML + "<small>Error fetching Comments</small>";
       });
     }
+  }
+
+  function parseMarkdown (comments, gistId, el, callback) {
+    var opts = {
+      url: apiRoot + 'markdown',
+      reqDataType: 'json',
+      type: 'POST',
+    };
+    var delimiter = String.fromCharCode(0x3091);
+
+    var reqText = comments.reduce(function (mem, curr) {
+      return mem + curr.body + '\r\n\r\n' + delimiter + '\r\n\r\n';
+    }, '');
+
+    opts.data = { text: reqText };
+    
+    ajax(opts, function (blob) {
+      var parsedComments = blob.split('<p>' + delimiter + '</p>');
+      parsedComments.forEach(function (comment, i) {
+        if (comments[i]) {
+          comments[i].html_body = comment.trim();
+        }
+      });
+      cache.set(gistId, comments);
+      callback(el, comments);
+    });
   }
 
   function renderComments (el, comments) {
@@ -186,32 +193,8 @@ var Hubbub = (function () {
   function renderCommentBody (comment) {
     var body = document.createElement('div');
     body.setAttribute('class', cssClass.commentBody);
-
-    if (cache.hasMarkdown(comment.id)) {
-      body.innerHTML = cache.getMarkdown(comment.id);
-    } else {
-      body.innerHTML = '<p>' + comment.body + '</p>';
-      parseMarkdown(comment, function (text) {
-        body.innerHTML = text;
-      });
-    }
+    body.innerHTML = comment.html_body;
     return body;
-  }
-
-  function parseMarkdown (comment, callback) {
-    var opts = {};
-    if (useFixtures) {
-      opts.url = 'fixtures/' + comment.id + '.html';
-    } else {
-      opts.url = apiRoot + 'markdown';
-      opts.reqDataType = 'json';
-      opts.type = 'POST';
-      opts.data = { text: comment.body };
-    }
-    ajax(opts, function (markdown) {
-      cache.setMarkdown(comment.id, markdown);
-      callback(markdown);
-    });
   }
 
   function ajax (options, success, error) {
