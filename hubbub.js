@@ -17,18 +17,30 @@ var Hubbub = (function () {
     return;
   }
 
-  var cssClass    = 'hubbub',
-      gistUrlAttr = 'data-gist-url',
-      apiRoot     = 'https://api.github.com/',
-      widgets     = document.querySelectorAll('.'+cssClass),
-      hubbub      = {},
-      useFixtures = false;
+  var containerClass = 'hubbub',
+      gistUrlAttr    = 'data-gist-url',
+      apiRoot        = 'https://api.github.com/',
+      widgets        = document.querySelectorAll('.'+containerClass),
+      hubbub         = {},
+      useFixtures    = false;
+
+  var cssClass = {
+    avatar: 'hubbub-avatar',
+    avatarLink: 'hubbub-avatar-link',
+    header: 'hubbub-header',
+    username: 'hubbub-username',
+    commentBody: 'hubbub-comment-body',
+    timestamp: 'hubbub-timestamp',
+    permalink: 'hubbub-permalink',
+    content: 'hubbub-content',
+    container: 'hubbub-container',
+  };
 
   var cache = (function () {
     var gistKey      = 'hubbub-gist-',
         markdownKey  = 'hubbub-markdown-',
-        gistLife     = 3600000,
-        markdownLife = 21600000;
+        gistLife     = 60 * 60 * 1000,
+        markdownLife = 6 * 60 * 60 * 1000;
 
     return {
       hasGist: function (id) {
@@ -111,11 +123,11 @@ var Hubbub = (function () {
 
   function renderComment (container, comment) {
     var el = document.createElement('div');
-    el.setAttribute('class', 'hubbub-container');
+    el.setAttribute('class', cssClass.container);
     el.appendChild(renderAvatar(comment.user));
 
     var content = document.createElement('div');
-    content.setAttribute('class', 'hubbub-content');
+    content.setAttribute('class', cssClass.content);
     content.appendChild(renderHeader(container, comment));
     content.appendChild(renderCommentBody(comment));
 
@@ -125,10 +137,10 @@ var Hubbub = (function () {
 
   function renderHeader (container, comment) {
     var header = document.createElement('div');
-    header.setAttribute('class', 'hubbub-header');
+    header.setAttribute('class', cssClass.header);
 
     var un = document.createElement('a');
-    un.setAttribute('class', 'hubbub-username');
+    un.setAttribute('class', cssClass.username);
     un.setAttribute('href', comment.user.html_url);
     un.innerHTML = '<b>' + comment.user.login + '</b>';
 
@@ -136,7 +148,7 @@ var Hubbub = (function () {
     commentUrl = commentUrl + '#comment-' + comment.id;
 
     var pl = document.createElement('a');
-    pl.setAttribute('class', 'hubbub-permalink');
+    pl.setAttribute('class', cssClass.permalink);
     pl.setAttribute('href', commentUrl);
     pl.textContent = 'commented';
 
@@ -149,7 +161,7 @@ var Hubbub = (function () {
   function renderTimestamp (timestamp) {
     var diff = Date.now() - new Date(timestamp).getTime();
     var el = document.createElement('time');
-    el.setAttribute('class', 'hubbub-timestamp');
+    el.setAttribute('class', cssClass.timestamp);
     el.setAttribute('datetime', timestamp);
     el.setAttribute('title', timestamp);
 
@@ -173,7 +185,7 @@ var Hubbub = (function () {
 
   function renderCommentBody (comment) {
     var body = document.createElement('div');
-    body.setAttribute('class', 'hubbub-comment-body');
+    body.setAttribute('class', cssClass.commentBody);
 
     if (cache.hasMarkdown(comment.id)) {
       body.innerHTML = cache.getMarkdown(comment.id);
@@ -232,9 +244,9 @@ var Hubbub = (function () {
   function renderAvatar (user) {
     var a = document.createElement('a');
     a.setAttribute('href', user.html_url);
-    a.setAttribute('class', 'hubbub-avatar-link');
+    a.setAttribute('class', cssClass.avatarLink);
     var img = document.createElement('img');
-    img.setAttribute('class', 'hubbub-avatar');
+    img.setAttribute('class', cssClass.avatar);
     img.setAttribute('src', user.avatar_url);
     img.setAttribute('width', 48);
     img.setAttribute('height', 48);
@@ -244,11 +256,13 @@ var Hubbub = (function () {
 
   hubbub.appendWidget = function (el, gistUrl) {
     var div = document.createElement('div');
-    div.setAttribute('class', cssClass);
+    div.setAttribute('class', containerClass);
     div.setAttribute(gistUrlAttr, gistUrl);
     el.appendChild(div);
     getComments(div, renderComments);
   };
+
+  hubbub.css = cssClass;
 
   return hubbub;
 })();
